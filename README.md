@@ -196,11 +196,6 @@ tail -f tunnel-server/logs/server.log
 
 Этот проект распространяется под лицензией MIT. См. [LICENSE](LICENSE) для подробностей.
 
-## 🆘 Поддержка
-
-- **GitHub Issues** - [Сообщить о проблеме](https://github.com/twinleq/camera-agent/issues)
-- **Документация** - [Wiki](https://github.com/twinleq/camera-agent/wiki)
-- **Discussions** - [Обсуждения](https://github.com/twinleq/camera-agent/discussions)
 
 ## 🙏 Благодарности
 
