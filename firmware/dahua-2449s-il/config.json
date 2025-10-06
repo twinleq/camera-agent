@@ -15,15 +15,34 @@
   },
   "agent": {
     "agent_id": "dahua-2449s-il-001",
-    "tunnel_server_url": "ws://your-tunnel-server.com:8080/tunnel",
-    "tunnel_server_token": "your-secret-token",
+    "connection_mode": "hybrid",
     "log_level": "INFO"
   },
   "tunnel": {
+    "enabled": true,
+    "server_url": "ws://your-tunnel-server.com:8080/tunnel",
+    "server_token": "your-secret-token",
     "tunnel_port": 8554,
     "connection_timeout": 30,
     "reconnect_interval": 10,
     "heartbeat_interval": 30
+  },
+  "p2p": {
+    "enabled": true,
+    "stun_servers": [
+      "stun:stun.l.google.com:19302",
+      "stun:stun1.l.google.com:19302"
+    ],
+    "turn_servers": [
+      {
+        "url": "turn:turn-server.com:3478",
+        "username": "user",
+        "password": "pass"
+      }
+    ],
+    "registry_url": "https://p2p-registry.com/api",
+    "ice_timeout": 30,
+    "fallback_to_tunnel": true
   },
   "streaming": {
     "quality": "high",

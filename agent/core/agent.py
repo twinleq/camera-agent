@@ -34,8 +34,18 @@ class AgentConfig:
     """Конфигурация агента"""
     # Основные настройки
     agent_id: str
-    tunnel_server_url: str  # URL туннельного сервера
-    tunnel_server_token: str
+    connection_mode: str = "tunnel"  # tunnel, p2p, hybrid
+    
+    # Туннельные настройки
+    tunnel_server_url: str = ""  # URL туннельного сервера
+    tunnel_server_token: str = ""
+    tunnel_port: int = 8554  # Порт для туннеля на сервере
+    
+    # P2P настройки
+    p2p_enabled: bool = False
+    stun_servers: list = None  # Список STUN серверов
+    turn_servers: list = None  # Список TURN серверов
+    p2p_registry_url: str = ""  # URL P2P реестра
     
     # Настройки камеры
     camera_ip: str = "127.0.0.1"  # IP камеры (обычно локальный)
@@ -43,8 +53,7 @@ class AgentConfig:
     camera_username: str = "admin"
     camera_password: str = "admin"
     
-    # Туннельные настройки
-    tunnel_port: int = 8554  # Порт для туннеля на сервере
+    # Сетевые настройки
     connection_timeout: int = 30
     reconnect_interval: int = 10
     heartbeat_interval: int = 30
@@ -331,6 +340,40 @@ class CameraAgent:
             "last_heartbeat": self.last_heartbeat,
             "buffer_size": len(self.buffer)
         }
+
+
+class P2PConnection:
+    """Класс для P2P соединения"""
+    
+    def __init__(self, agent_id: str, stun_servers: list, turn_servers: list):
+        self.agent_id = agent_id
+        self.stun_servers = stun_servers or []
+        self.turn_servers = turn_servers or []
+        self.connected = False
+        self.peer_connections = {}  # Активные P2P соединения
+        self.ice_connection = None
+        self.stats = {
+            "p2p_connections": 0,
+            "direct_connections": 0,
+            "relay_connections": 0,
+            "bytes_sent": 0,
+            "bytes_received": 0
+        }
+    
+    async def register_with_p2p_registry(self, registry_url: str):
+        """Регистрация в P2P реестре"""
+        # TODO: Реализация регистрации в P2P реестре
+        self.connected = True
+    
+    async def establish_p2p_connection(self, peer_id: str):
+        """Установка P2P соединения с клиентом"""
+        # TODO: Реализация ICE/STUN/TURN для P2P
+        return True
+    
+    async def send_stream_via_p2p(self, data: bytes, peer_id: str):
+        """Отправка потока через P2P соединение"""
+        # TODO: Реализация отправки данных через P2P
+        return True
 
 
 class TunnelConnection:
