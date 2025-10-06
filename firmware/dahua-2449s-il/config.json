@@ -1,0 +1,32 @@
+{
+  "camera": {
+    "model": "dahua-2449s-il",
+    "platform": "linux_arm",
+    "architecture": "armv7",
+    "ip": "127.0.0.1",
+    "rtsp_port": 554,
+    "username": "admin",
+    "password": "admin",
+    "auto_detect_ip": true,
+    "stream_paths": [
+      "/cam/realmonitor?channel=1&subtype=0",
+      "/cam/realmonitor?channel=1&subtype=1"
+    ]
+  },
+  "agent": {
+    "agent_id": "dahua-2449s-il-001",
+    "tunnel_server_url": "ws://your-tunnel-server.com:8080/tunnel",
+    "tunnel_server_token": "your-secret-token",
+    "log_level": "INFO"
+  },
+  "tunnel": {
+    "tunnel_port": 8554,
+    "connection_timeout": 30,
+    "reconnect_interval": 10,
+    "heartbeat_interval": 30
+  },
+  "streaming": {
+    "quality": "high",
+    "buffer_size": 2097152
+  }
+}

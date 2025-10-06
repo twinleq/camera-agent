@@ -1,0 +1,54 @@
+{
+  "camera": {
+    "model": "dahua-2449s-il",
+    "platform": "linux_arm",
+    "architecture": "armv7",
+    "max_resolution": "2688x1520",
+    "max_fps": 20,
+    "codec": "H.265",
+    "features": ["WDR", "3D-DNR", "HLC", "BLC", "Smart Detection"],
+    "storage": "MicroSD up to 256GB",
+    "power": "12V DC or PoE (802.3af)",
+    "protection": "IP67"
+  },
+  "agent": {
+    "agent_id": "dahua-2449s-il-001",
+    "cloud_server_url": "ws://localhost:8080/agent",
+    "cloud_server_token": "your-secret-token-here",
+    "log_level": "INFO"
+  },
+  "streaming": {
+    "quality": "high",
+    "buffer_size": 2097152,
+    "rtsp_port": 554,
+    "stream_paths": [
+      "/cam/realmonitor?channel=1&subtype=0",
+      "/cam/realmonitor?channel=1&subtype=1"
+    ],
+    "max_resolution": "2688x1520",
+    "max_fps": 20,
+    "codec": "H.265"
+  },
+  "network": {
+    "connection_timeout": 30,
+    "reconnect_interval": 10,
+    "heartbeat_interval": 30,
+    "max_retries": 5
+  },
+  "security": {
+    "encryption_enabled": true,
+    "ssl_verify": true
+  },
+  "recording": {
+    "enabled": true,
+    "path": "/mnt/sdcard/recordings",
+    "max_size": 1073741824,
+    "format": "mp4"
+  },
+  "motion_detection": {
+    "enabled": true,
+    "sensitivity": 0.5,
+    "smart_detection": true
+  }
+}
+

@@ -1,0 +1,27 @@
+{
+  "camera": {
+    "model": "dahua-2449s-il",
+    "platform": "linux_arm",
+    "architecture": "armv7"
+  },
+  "agent": {
+    "agent_id": "your-agent-id",
+    "cloud_server_url": "wss://your-cloud-server.com/agent",
+    "cloud_server_token": "your-token-here",
+    "log_level": "INFO"
+  },
+  "streaming": {
+    "quality": "medium",
+    "buffer_size": 1048576,
+    "rtsp_port": 554,
+    "stream_paths": [
+      "/cam/realmonitor?channel=1&subtype=0",
+      "/cam/realmonitor?channel=1&subtype=1"
+    ]
+  },
+  "network": {
+    "connection_timeout": 30,
+    "reconnect_interval": 10,
+    "heartbeat_interval": 30
+  }
+}
