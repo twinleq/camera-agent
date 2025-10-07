@@ -73,3 +73,5 @@ find . -name "*agent*" -o -name "*flussonic*"
 - Reverse engineering в рамках fair use
 
 Не распространяйте прошивку без разрешения Dahua/Flussonic.
+
+

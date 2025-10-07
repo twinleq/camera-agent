@@ -35,11 +35,12 @@ class AgentConfig:
     # Основные настройки
     agent_id: str
     connection_mode: str = "tunnel"  # tunnel, p2p, hybrid
+    device_id: str = ""  # Device ID камеры (получается автоматически)
     
-    # Туннельные настройки
+    # Туннельные настройки (как у Flussonic/peeklio)
     tunnel_server_url: str = ""  # URL туннельного сервера
     tunnel_server_token: str = ""
-    tunnel_port: int = 8554  # Порт для туннеля на сервере
+    tunnel_port: int = 2956  # Порт для туннеля (как в peeklio: -M 2956)
     
     # P2P настройки
     p2p_enabled: bool = False
@@ -62,13 +63,18 @@ class AgentConfig:
     stream_quality: str = "medium"  # low/medium/high
     buffer_size: int = 1024 * 1024  # 1MB буфер
     
-    # Безопасность
+    # Безопасность (как у peeklio)
     encryption_enabled: bool = True
     ssl_verify: bool = True
+    ssl_cert_file: str = "/etc/camera_agent/agent.pem"  # Как -A в peeklio
+    ssl_root_cert: str = "/etc/camera_agent/root.crt"   # Как -e в peeklio
+    
+    # Конфигурация (как у peeklio)
+    config_path: str = "/mnt/mtd/Config/camera_agent.cfg"  # Как -c в peeklio
     
     # Логирование
     log_level: str = "INFO"
-    log_file: Optional[str] = None
+    log_file: Optional[str] = "/var/log/camera_agent.log"
 
 
 class CameraAgent:
@@ -83,6 +89,9 @@ class CameraAgent:
         self.stream_processor = None
         self.buffer = []
         
+        # Device ID (как в peeklio получается из armbenv)
+        self.device_id = self._get_device_id()
+        
         # Настройка логирования
         self._setup_logging()
         
@@ -96,6 +105,47 @@ class CameraAgent:
         }
         
         self.logger.info(f"Camera Agent {config.agent_id} инициализирован")
+    
+    def _get_device_id(self) -> str:
+        """
+        Получение Device ID камеры
+        В peeklio это: armbenv -r | grep 'ID =' | grep -v : | sed 's/.\\{5\\}//'
+        """
+        if self.config.device_id:
+            return self.config.device_id
+        
+        try:
+            # Попытка получить из armbenv (Dahua)
+            result = subprocess.run(
+                ['armbenv', '-r'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            
+            if result.returncode == 0:
+                for line in result.stdout.split('\n'):
+                    if 'ID =' in line and ':' not in line:
+                        # Извлекаем ID (пропускаем первые 5 символов)
+                        device_id = line[5:].strip()
+                        logging.info(f"[AGENT] Device ID получен из armbenv: {device_id}")
+                        return device_id
+        except Exception as e:
+            logging.warning(f"[AGENT] Не удалось получить Device ID из armbenv: {e}")
+        
+        # Fallback - используем MAC адрес или генерируем
+        try:
+            import uuid
+            mac = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff)
+                           for elements in range(0,2*6,2)][::-1])
+            device_id = mac.replace(':', '')
+            logging.info(f"[AGENT] Device ID сгенерирован из MAC: {device_id}")
+            return device_id
+        except:
+            # Последний fallback
+            device_id = str(uuid.uuid4())[:8]
+            logging.info(f"[AGENT] Device ID сгенерирован случайно: {device_id}")
+            return device_id
     
     def _setup_logging(self):
         """Настройка логирования"""

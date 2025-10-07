@@ -15,14 +15,18 @@
   },
   "agent": {
     "agent_id": "dahua-2449s-il-001",
+    "device_id": "",
     "connection_mode": "hybrid",
-    "log_level": "INFO"
+    "log_level": "INFO",
+    "ssl_cert_file": "/etc/camera_agent/agent.pem",
+    "ssl_root_cert": "/etc/camera_agent/root.crt",
+    "config_path": "/mnt/mtd/Config/camera_agent.cfg"
   },
   "tunnel": {
     "enabled": true,
     "server_url": "ws://your-tunnel-server.com:8080/tunnel",
     "server_token": "your-secret-token",
-    "tunnel_port": 8554,
+    "tunnel_port": 2956,
     "connection_timeout": 30,
     "reconnect_interval": 10,
     "heartbeat_interval": 30
