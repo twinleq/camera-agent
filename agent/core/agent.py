@@ -159,15 +159,20 @@ class CameraAgent:
     async def start(self):
         """Запуск агента"""
         try:
-            self.logger.info("Запуск Camera Agent...")
+            self.logger.info(f"Запуск Camera Agent (Device ID: {self.device_id})...")
             self.status = AgentStatus.STARTING
             self.start_time = time.time()
             
             # Инициализация платформо-специфичных компонентов
             await self._init_platform()
             
-            # Подключение к облачному серверу
-            await self._connect_to_cloud()
+            # Выбор режима подключения
+            if self.config.connection_mode == "tunnel":
+                await self._connect_tunnel_mode()
+            elif self.config.connection_mode == "p2p":
+                await self._connect_p2p_mode()
+            else:  # hybrid
+                await self._connect_hybrid_mode()
             
             # Запуск стриминга
             await self._start_streaming()
@@ -211,6 +216,52 @@ class CameraAgent:
         else:
             # Общая инициализация
             self.logger.warning("Платформо-специфичные компоненты не найдены")
+    
+    async def _connect_tunnel_mode(self):
+        """Подключение в режиме туннеля (как peeklio)"""
+        self.logger.info("[TUNNEL] Режим туннеля активирован")
+        
+        # Создание туннельного соединения
+        self.connection = TunnelConnection(
+            url=self.config.tunnel_server_url,
+            token=self.config.tunnel_server_token,
+            agent_id=self.config.agent_id
+        )
+        
+        # Регистрация и создание туннеля
+        await self.connection.register()
+        await self.connection.establish_tunnel()
+    
+    async def _connect_p2p_mode(self):
+        """Подключение в режиме P2P"""
+        self.logger.info("[P2P] Режим P2P активирован")
+        
+        # Создание P2P соединения
+        self.connection = P2PConnection(
+            agent_id=self.config.agent_id,
+            stun_servers=self.config.stun_servers or [],
+            turn_servers=self.config.turn_servers or []
+        )
+        
+        # Регистрация в P2P реестре
+        await self.connection.register_with_p2p_registry(self.config.p2p_registry_url)
+    
+    async def _connect_hybrid_mode(self):
+        """Гибридный режим - пытаемся P2P, fallback на туннель"""
+        self.logger.info("[HYBRID] Гибридный режим активирован")
+        
+        # Сначала пытаемся P2P
+        if self.config.p2p_enabled:
+            try:
+                await self._connect_p2p_mode()
+                self.logger.info("[HYBRID] P2P соединение установлено")
+                return
+            except Exception as e:
+                self.logger.warning(f"[HYBRID] P2P не удалось: {e}")
+        
+        # Fallback на туннель
+        await self._connect_tunnel_mode()
+        self.logger.info("[HYBRID] Используется туннельное соединение")
     
     async def _connect_to_cloud(self):
         """Подключение к облачному серверу"""
