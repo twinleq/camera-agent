@@ -380,3 +380,4 @@ du -sh /var/log/camera_agent/
 - [Примеры интеграции](integration.md)
 - [FAQ](faq.md)
 
+
